@@ -1,10 +1,9 @@
-package lx.team6.dto;
+package lx.team6.vo;
 
-public class UserInfoDTO {
+public class UserInfoVo {
 	
 	
 	/*
-	 * 데이터 전송을 위해 만든 객체 메인에 해당 정보들을 띄우기 위해 dto를 따로 만들었다. 
 	 * (keyword와 user 정보를 join 해서 보여줘야 하기 때문에)
 	 */
 	

@@ -1,5 +1,5 @@
-import { ref } from "vue";
-import { defineStore } from "pinia";
+import { ref} from "vue";
+import { defineStore, storeToRefs } from "pinia";
 import { findById, findPassword, login } from "@/api/user";
 import router from "@/router/index.js";
 import { getTestList, getPostList, getPostByNo, getLikesPostList, toggleLikePost, getLikeByPostNo, getLikesList, searchPostList, searchMyPostList, getUserPostList } from '@/api/test';
@@ -31,6 +31,89 @@ export const useTestStore = defineStore("test", () => {
 
 
 
+///댓글 피니아
+export const useCommentStore = defineStore('comment', () => {
+
+  const newCommentContent = ref('');
+  const commentList = ref([])
+  const postStore = usePostStore();
+  const currentPostNo = ref(null);
+
+  //댓글 목록 가져오는 함수
+  const fetchComments = async (postNo) => {
+    console.log(postNo);
+    // const { postone } = storeToRefs(postStore);
+    
+    // currentPostNo.value = postone.value;
+    // console.log(currentPostNo.value);
+    try {
+      const response = await axios.get(`http://localhost:9000/backend/api/comments/${postNo}`);
+      commentList.value = response.data;
+      console.log(commentList.value);
+    } catch (error) {
+      console.error('댓글 목록 가져오기 실패:', error);
+      if(error.response && error.response.status === 204) { //204 : 컨텐트가 없다는 뜻
+        commentList.value = []; //댓글이 없는 경우 빈 배열을 나오게 한다. 이건 오류가 아니니까.
+      } else  {
+        alert('댓글 목록을 불러오는데 실패했습니다.');
+      }
+
+    }
+  };
+  
+
+  //댓글 등록 함수
+  const newComment = async (comment) => {
+    console.log(comment);
+
+    if (!comment.postNo) {
+      alert('게시글 정보를 찾을 수 없습니다.');
+      return;
+    }
+
+    try {
+        // content: newCommentContent.value,
+        // postNo:  currentPostNo.value //컨트롤러에서도 매개로 받고, poststore에서 no를 받아온다. 앞에서 정의된 게시글 번호를 받는다. 
+  
+      const response = await axios.post('http://localhost:9000/backend/api/createComment', comment);
+      console.log(response.data);
+
+      // 성공 시 처리
+      // newCommentContent.value = ''; // 입력 필드 초기화 : 이거는 해당 페이지에서 새로고침
+      alert('댓글이 성공적으로 추가되었습니다.');
+
+      //댓글 목록 새로고침
+      await fetchComments(comment.postNo);
+
+    } catch (error) {
+      console.error('댓글 달기 실패:', error);
+      if (error.response && error.response.status === 401) { //401: 인증이 필요하다는 뜻
+        throw new Error('로그인이 필요합니다.');
+
+      } else {
+        throw new Error('댓글 달기에 실패했습니다. 다시 시도해주세요.');
+      }
+    }
+  };
+
+  //댓글삭제 함수
+  const handleDeleteComment = async (commentNo, postNo) => {
+    try {
+     await axios.delete(`http://localhost:9000/backend/api/deleteComment/${commentNo}`);
+     console.log('댓글 삭제 완료');
+     
+     await fetchComments(postNo);
+
+    }catch(error) {
+      console.error('댓글 삭제 실패', error);
+  }
+  
+  }
+
+  return {newComment, newCommentContent, commentList, fetchComments, currentPostNo, handleDeleteComment};
+})
+
+
 //게시글 목록 가져오는 상태
 export const usePostListStore = defineStore('postlist', () => {
   const postlist = ref([]);
@@ -48,9 +131,11 @@ export const usePostStore = defineStore('postByNo', () => {
   const postone = ref({});
   async function fetchPostone(postNo) {
     try {
-      postone.value = await getPostByNo(postNo);
+      const response = await axios.get(`/api/post/${postNo}`);
+      postone.value = response.data;
     } catch (err) {
       console.error('Error fetching post:', err);
+      throw err;
     }
   }
   return { postone, fetchPostone };

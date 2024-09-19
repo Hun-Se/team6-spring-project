@@ -3,6 +3,7 @@
 <mapper namespace="mapper-post">
 
 
+
 	<select id="getPostList" resultType="lx.team6.vo.PostVO">
 		select p.post_no postNo
 		,

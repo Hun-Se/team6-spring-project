@@ -14,12 +14,12 @@ public class CommentDAO {
 	@Autowired
 	SqlSession session;
 	
-	public int createComment(CommentVo vo) {
-		return session.insert("createComment",vo);
+	public int createComment(Object reqData) {
+		return session.insert("createComment",reqData);
 	}
 	
-	public List<CommentVo> getCommentList() {
-		return session.selectList("getCommentList");
+	public List<CommentVo> getCommentListByPostNo(Integer postNo) {
+		return session.selectList("getCommentListByPostNo", postNo);
 	}
 	
 	public int deleteComment(Integer commentNo) {

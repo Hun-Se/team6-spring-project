@@ -1,9 +1,9 @@
 <template>
 
  <!-- 헤더 시작 -->
- <div class="header" style="height: 8vh; background-color: #3abef9">
+ <div class="header fixed-top" style="height: 8vh;">
       <!-- 네비바 -->
-      <nav class="navbar navbar-expand-lg navbar-dark w-100 h-100">
+      <nav class="navbar navbar-expand-lg navbar-dark w-100 h-100 d-flex flex">
         <div class="container-fluid">
           <div class="d-flex align-items-center">
             <img
@@ -33,7 +33,7 @@
             class="collapse navbar-collapse justify-content-end"
             id="navbarNavAltMarkup"
           >
-            <div class="navbar-nav justify-content-center align-items-center">
+            <div class="navbar-nav justify-content-center align-items-center fw-bold" style="color:black !important">
               <a class="nav-link" href="#serch">여행지</a>
 
               <a class="nav-link" href="#">계획 등록</a>
@@ -65,3 +65,32 @@ const { startBt } = storeToRefs(storeLog);
 
 
 </script>
+
+<style>
+
+.header {
+  background-color: #97c5f6;
+}
+
+.navbar-nav .nav-link {
+  color: black !important; 
+  font-size: 15px;
+}
+
+  .navbar-nav .nav-link:hover {
+    color: #007bff !important;
+  }
+
+  .fixed-top {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1030;
+}
+
+body {
+  padding-top: 8vh;
+}
+
+</style>

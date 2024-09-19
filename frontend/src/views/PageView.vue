@@ -6,16 +6,32 @@
       <nav class="navbar navbar-expand-lg navbar-dark w-100 h-100">
         <div class="container-fluid">
           <div class="d-flex align-items-center">
-            <img width="50" height="50" src="https://img.icons8.com/stickers/50/airplane-take-off.png"
-              alt="airplane-take-off" />
-            <a class="navbar-brand ms-2 fw-bold" style="font-size: 30px" href="#">I.GO!</a>
+            <img
+              width="50"
+              height="50"
+              src="https://img.icons8.com/stickers/50/airplane-take-off.png"
+              alt="airplane-take-off"
+            />
+            <a class="navbar-brand ms-2 fw-bold" style="font-size: 30px" href="#"
+              >I.GO!</a
+            >
           </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
             <span class="navbar-toggler-icon"></span>
           </button>
 
-          <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+          <div
+            class="collapse navbar-collapse justify-content-end"
+          id="navbarNavAltMarkup"
+          >
             <div class="navbar-nav justify-content-center align-items-center">
               <a class="nav-link" href="#">마이페이지</a>
               <span>{{ name }}</span>
@@ -105,7 +121,11 @@
                       <!--begin::Links-->
                       <div class="overlay-layer card-rounded bg-dark bg-opacity-25">
                         <a @click="goHome()" class="btn btn-primary">홈으로</a>
-                        <a href="pages/careers/apply.html" class="btn btn-light-primary ms-3">일정보기</a>
+                        <a
+                          href="pages/careers/apply.html"
+                          class="btn btn-light-primary ms-3"
+                          >일정보기</a
+                        >
                       </div>
                       <!--end::Links-->
                     </div>
@@ -125,10 +145,20 @@
                       <span class="ms-2 me-2">{{ likeCount }}</span>
                     </button>
                   </div>
-                  <button id="updateButton" @click="showUpdatePostModal(postone.postNo)"
-                    class="btn btn-primary fs-6 p-1 me-2">수정</button>
-                  <button id="deleteButton" @click="deletePost(postone.postNo)"
-                    class="btn btn-primary fs-6 p-1">삭제</button>
+                  <button
+                    id="updateButton"
+                    @click="showUpdatePostModal(postone.postNo)"
+                    class="btn btn-primary fs-6 p-1 me-2"
+                  >
+                    수정
+                  </button>
+                  <button
+                    id="deleteButton"
+                    @click="deletePost(postone.postNo)"
+                    class="btn btn-primary fs-6 p-1"
+                  >
+                    삭제
+                  </button>
                 </div>
                 <!--end::Post content-->
               </div>
@@ -154,54 +184,53 @@
               <!--end::Separator-->
 
               <!-- 댓글 작성 START -->
-              <!-- 댓글 1 START -->
+              <div class="d-flex align-items-center mb-5">
+                <input
+                  v-model="newCommentContent"
+                  class="form-control me-3"
+                  style="width: 90%"
+                  placeholder="댓글을 입력해주세요"
+                />
+                <button class="btn btn-primary" @click="submitComment">댓글달기</button>
+              </div>
+
+              <!-- 댓글 START -->
               <!--begin::Block-->
-              <div class="d-flex align-items-center border-1 border-dashed card-rounded p-5 p-lg-5 mb-2">
-                <!--begin::Section-->
-                <div class="text-center flex-shrink-0 me-7 me-lg-13">
-                  <!--begin::Avatar-->
-                  <div class="symbol symbol-50px symbol-circle mb-2">
-                    <img src="@/assets/cat.jpg" class="" alt="" />
+              <div v-for="comment in commentList" :key="comment.commentNo">
+                <div
+                  class="d-flex align-items-center border-1 border-dashed card-rounded p-5 p-lg-5 mb-2"
+                >
+                  <!--begin::Section-->
+                  <div class="text-center flex-shrink-0 me-7 me-lg-13">
+                    <!--begin::Avatar-->
+                    <div class="symbol symbol-50px symbol-circle mb-2">
+                      <img :src="comment.img" class="" alt="" />
+                    </div>
+                    <!--end::Avatar-->
                   </div>
-                  <!--end::Avatar-->
-                </div>
-                <!--end::Section-->
-                <!--begin::Text-->
-                <div class="mb-0 fs-6">
-                  <a class="text-gray-700 fw-bold text-hover-primary">댓글단 아이디</a>
-                  <div class="text-muted fw-semibold lh-lg mb-2">
-                    지중해 감성 제대로네요!! 가보고 싶어요 - 댓글 내용
+                  <!--end::Section-->
+                  <!--begin::Text and Icon-->
+                  <div class="flex-grow-1 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start">
+                      <a class="text-gray-700 fw-bold text-hover-primary">{{
+                        comment.userName
+                      }}</a>
+                      <i
+                        class="bi bi-x-square cursor-pointer"
+                        @click="deleteComment(comment.commentNo)"
+                      ></i>
+                    </div>
+                    <div class="text-muted fw-semibold lh-lg mb-2">
+                      {{ comment.content }}
+                    </div>
                   </div>
+                  <!--end::Text and Icon-->
                 </div>
-                <!--end::Text-->
               </div>
               <!--end::Block-->
               <!-- 댓글 1 END -->
-              <!-- 댓글 2 START -->
-              <!--begin::Block-->
-              <div class="d-flex align-items-center border-1 border-dashed card-rounded p-5 p-lg-5 mb-2">
-                <!--begin::Section-->
-                <div class="text-center flex-shrink-0 me-7 me-lg-13">
-                  <!--begin::Avatar-->
-                  <div class="symbol symbol-50px symbol-circle mb-2">
-                    <img src="@/assets/img_trip.jpg" class="" alt="" />
-                  </div>
-                  <!--end::Avatar-->
-                </div>
-                <!--end::Section-->
-                <!--begin::Text-->
-                <div class="mb-0 fs-6">
-                  <a class="text-gray-700 fw-bold text-hover-primary">댓글단 아이디2</a>
-                  <div class="text-muted fw-semibold lh-lg mb-2">
-                    사진 진짜 청량하네요 저도 남부여행 가고 싶네요 - 댓글 내용2
-                  </div>
-                </div>
-                <!--end::Text-->
-              </div>
-              <!--end::Block-->
-              <!-- 댓글 2 END -->
-              <!-- 댓글 작성 END -->
 
+              <!-- 댓글 작성 END -->
             </div>
             <!--end::Section-->
           </div>
@@ -213,7 +242,6 @@
     </div>
     <!--end::Content-->
 
-
     <!-- 블로그 포스트 형식 가져온거 END -->
   </div>
 
@@ -222,14 +250,14 @@
   <!-- 글 수정 모달 START -->
   <!--begin::대화상자 - 검사일정수정 -->
   <div class="modal fade" id="kt_modal_new_target" tabindex="-1" aria-hidden="true">
-
     <div class="modal-dialog modal-dialog-centered mw-650px">
-
       <div class="modal-content rounded">
-
         <div class="modal-header pb-0 border-0 justify-content-end">
           <!--begin::닫기 아이콘-->
-          <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+          <div
+            class="btn btn-sm btn-icon btn-active-color-primary"
+            data-bs-dismiss="modal"
+          >
             <i class="ki-duotone ki-cross fs-1">
               <span class="path1"></span>
               <span class="path2"></span>
@@ -246,7 +274,9 @@
               <h1 class="mb-3">후기 글 수정</h1>
               <!--end::Title-->
               <!--begin::Description-->
-              <div class="text-muted fw-semibold fs-5">글의 제목, 이미지, 내용을 수정해보세요.</div>
+              <div class="text-muted fw-semibold fs-5">
+                글의 제목, 이미지, 내용을 수정해보세요.
+              </div>
               <!--end::Description-->
             </div>
             <!--end::제목-->
@@ -255,7 +285,11 @@
             <div class="d-flex flex-column mb-8 fv-row">
               <label class="d-flex align-items-center fs-6 fw-semibold mb-2">
                 <span class="required">제목</span>
-                <span class="ms-1" data-bs-toggle="tooltip" title="제목을 입력하세요. 필수랍니다~">
+                <span
+                  class="ms-1"
+                  data-bs-toggle="tooltip"
+                  title="제목을 입력하세요. 필수랍니다~"
+                >
                   <i class="ki-duotone ki-information-5 text-gray-500 fs-6">
                     <span class="path1"></span>
                     <span class="path2"></span>
@@ -263,14 +297,23 @@
                   </i>
                 </span>
               </label>
-              <input type="text" class="form-control form-control-solid" name="target_title" v-model="titleInput" />
+              <input
+                type="text"
+                class="form-control form-control-solid"
+                name="target_title"
+                v-model="titleInput"
+              />
             </div>
             <!--end::이름 입력상자-->
             <!--begin::내용 입력상자-->
             <div class="d-flex flex-column mb-8 fv-row">
               <label class="d-flex align-items-center fs-6 fw-semibold mb-2">
                 <span class="required">내용</span>
-                <span class="ms-1" data-bs-toggle="tooltip" title="내용을 입력하세요. 필수랍니다~">
+                <span
+                  class="ms-1"
+                  data-bs-toggle="tooltip"
+                  title="내용을 입력하세요. 필수랍니다~"
+                >
                   <i class="ki-duotone ki-information-5 text-gray-500 fs-6">
                     <span class="path1"></span>
                     <span class="path2"></span>
@@ -278,14 +321,26 @@
                   </i>
                 </span>
               </label>
-              <textarea class="form-control form-control-solid" name="target_content" v-model="contentInput"
-                rows="5"></textarea>
+              <textarea
+                class="form-control form-control-solid"
+                name="target_content"
+                v-model="contentInput"
+                rows="5"
+              ></textarea>
             </div>
             <!--end::내용 입력상자-->
             <!--begin::하단버튼-->
             <div class="text-center">
-              <button type="button" class="btn btn-primary" @click.prevent="updatePost(postone.postNo)">저장</button>
-              <button type="reset" class="btn btn-light ms-3" @click="clearAll()">모두 지우기</button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click.prevent="updatePost(postone.postNo)"
+              >
+                저장
+              </button>
+              <button type="reset" class="btn btn-light ms-3" @click="clearAll()">
+                모두 지우기
+              </button>
             </div>
             <!--end::하단버튼-->
           </form>
@@ -302,14 +357,13 @@
 </template>
 
 <script setup>
-
-import { ref, onMounted } from 'vue';
-import { usePostStore, useLikeCountStore, usePostLikesListStore, useLikesListStore } from '@/stores/test';
-import { storeToRefs } from 'pinia';
-import { useRouter } from 'vue-router';
-import router from '@/router/index.js';
-import { deletePostByNo, updatePostByNo, insertLike, deleteLikeByNo } from '@/api/test';
-import { Modal } from 'bootstrap';
+import { ref, onMounted } from "vue";
+import { usePostStore, useLikeCountStore, usePostLikesListStore, useLikesListStore, useCommentStore } from "@/stores/test";
+import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+import router from "@/router/index.js";
+import { deletePostByNo, updatePostByNo, insertLike, deleteLikeByNo } from "@/api/test";
+import { Modal } from "bootstrap";
 // 로그인한 유저 넘버
 let userNo = sessionStorage.getItem("userNo");
 
@@ -383,13 +437,80 @@ const clickLike = async (id) => {
 
 
 
-  // 글 정보 가져오기 관련 함수, 변수
-  const poststore = usePostStore();
-  const { postone } = storeToRefs(poststore);
+const route = useRoute(); //현재 라우트 정보에 접근
+const poststore = usePostStore(); // 글 정보 가져오기 관련 함수, 변수
+const commentStore = useCommentStore(); //댓글 스토어 사용하기
+const newCommentContent = ref("");
+
+const { postone } = storeToRefs(poststore);
+const { commentList } = storeToRefs(commentStore);
+
+const postNo = route.params.postNo;
 
   console.log("Current post data:", postone);
   console.log("글번호 : ", postone.value.postNo);
 
+onMounted(async () => {
+  window.scrollTo(0, 0);
+  const postNo = route.params.postNo;
+  try {
+    await poststore.fetchPostone(postNo);
+    if (!postone.value || Object.keys(postNo).length === 0) {
+      throw new Error("게시글을 찾을 수 없습니다.");
+    }
+
+  
+    await commentStore.fetchComments(postNo); //댓글 가져오기
+
+    // 잘 나왔는지 확인
+    console.log("Current post data:", postone.value);
+    console.log("글번호 : ", postNo);
+  } catch (error) {
+    console.error("게시글 로딩 중 오류 발생:", error);
+    // alert("게시글을 찾을 수 없습니다. 메인 페이지로 이동합니다.");
+    // router.push("/");
+  }
+});
+
+//댓글 작성
+const submitComment = async () => {
+  if (postNo) {
+    try {
+      //await commentStore.newComment(postNo);
+      await commentStore.newComment({
+        content: newCommentContent.value, //여기서 값받고 피니아로 넘어가는 것이다. 
+        postNo: postNo,
+        userNo: sessionStorage.getItem("userNo"),
+      });
+    } catch (error) {
+      console.error("댓글 작성 오류 : ", error);
+      // if (error.response && error.response.status === 401) {
+      //   alert("로그인이 필요합니다.");
+      // } else {
+      //   alert("댓글작성 실패. 다시 시도하기");
+      // }
+    }
+  } else {
+    console.error("게시글 번호가 없습니다.");
+    alert("유효하지 않은 게시글입니다. 메인 페이지로 이동합니다.");
+    router.push("/");
+  }
+};
+
+//댓글 삭제
+async function deleteComment(commentNo) {
+  console.log("삭제할 댓글", commentNo);
+  if(confirm("정말 댓글을 삭제할까요?") == true) {
+    try {
+      await commentStore.handleDeleteComment(commentNo, postNo);
+
+      alert("댓글 삭제 완료!");
+
+    }catch (error) {
+      console.log("댓글삭제 오류", error);
+    }
+  }
+}
 
   // 글 삭제하기 버튼 함수
   //const deleteButton = document.querySelector('#deleteButton');
@@ -416,6 +537,7 @@ const clickLike = async (id) => {
   // 글 업데이트하기 버튼 - 모달 함수
   let titleInput = ref('');
   let contentInput = ref('');
+
 
   let updatePostModal;
 
@@ -473,10 +595,6 @@ const clickLike = async (id) => {
 </script>
 
 <style scoped>
-.card {
-  cursor: pointer;
-}
-
 .elevate-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   /* 부드러운 전환 효과 */
