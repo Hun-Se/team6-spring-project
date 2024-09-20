@@ -139,14 +139,53 @@
               <span class="fs-5">{{
                 item.startTime + '~' + item.endTime
               }}</span>
-              <div
-                class="card-body pt-6"
-                :class="`schedule-list-${index}`"
-              ></div>
+              <div class="card-body pt-6" :class="`schedule-list-${index}`">
+                <!--begin::Item-->
+                <div class="d-flex flex-stack">
+                  <div class="index-num fs-6">1</div>
+                  <!--begin::Symbol-->
+                  <div class="symbol symbol-40px me-4">
+                    <div
+                      class="symbol-label fs-2 fw-semibold bg-danger text-inverse-danger"
+                    >
+                      M
+                    </div>
+                  </div>
+                  <!--end::Symbol-->
+                  <!--begin::Section-->
+                  <div
+                    class="d-flex align-items-center flex-row-fluid flex-wrap"
+                  >
+                    <!--begin:Author-->
+                    <div class="flex-grow-1 me-2">
+                      <a
+                        href="pages/user-profile/overview.html"
+                        class="text-gray-800 text-hover-primary fs-6 fw-bold"
+                        >UI/UX Design</a
+                      >
+                      <span class="text-muted fw-semibold d-block fs-7"
+                        >40+ Courses</span
+                      >
+                    </div>
+                    <!--end:Author-->
+
+                    <!--begin::Actions-->
+                    <a
+                      href="#"
+                      class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-30px h-30px"
+                    >
+                      <i class="bi bi-x-square fs-2 color-danger"></i>
+                    </a>
+                    <!--begin::Actions-->
+                  </div>
+                  <!--end::Section-->
+                </div>
+                <!--end::Item-->
+                <!--begin::Separator-->
+                <div class="separator separator-dashed my-4"></div>
+                <!--end::Separator-->
+              </div>
             </div>
-            <button class="btn btn-dark w-100" @click="onClickComplteSchedule">
-              일정 만들기
-            </button>
           </div>
 
           <!-- step2 페이지 END -->
@@ -217,7 +256,6 @@ import { useCalenderModalStore } from '@/stores/modal';
 import { useScheduleStore } from '@/stores/schedule';
 import { ref, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
-import { insertSchedule } from '@/api/schedule';
 // import { placesSearchCB } from '@/lib/kakao-map';
 
 const schedlueStore = useScheduleStore();
@@ -377,15 +415,15 @@ function createSearchList(places) {
   const authorDiv = document.createElement('div');
   authorDiv.classList.add('flex-grow-1', 'me-2');
 
-  const locationAnchor = document.createElement('a');
-  locationAnchor.href = `${places.place_url}`;
-  locationAnchor.classList.add(
+  const locationSpan = document.createElement('span');
+  locationSpan.href = `${places.place_url}`;
+  locationSpan.classList.add(
     'text-gray-800',
     'text-hover-primary',
     'fs-6',
     'fw-bold'
   );
-  locationAnchor.textContent = places.address_name;
+  locationSpan.textContent = places.address_name;
 
   const addressSpan = document.createElement('span');
   addressSpan.classList.add('text-muted', 'fw-semibold', 'd-block', 'fs-7');
@@ -397,7 +435,7 @@ function createSearchList(places) {
   description.textContent =
     descriptionText[0] + '>' + descriptionText[descriptionText.length - 1];
 
-  authorDiv.appendChild(locationAnchor);
+  authorDiv.appendChild(locationSpan);
   authorDiv.appendChild(addressSpan);
   authorDiv.appendChild(description);
 
@@ -437,41 +475,10 @@ function createSearchList(places) {
   return [containerDiv, separatorDiv];
 }
 
-// 리스트 추가되는 개수 카운팅
-let count = 0;
-let numbers = [0];
-
 function createSelectLocatioList(places) {
-  const descriptionText = places.category_name.split('>');
-
   // 1. 최상위 컨테이너 div
   const containerDiv = document.createElement('div');
   containerDiv.classList.add('d-flex', 'flex-stack', 'selected-location');
-  containerDiv.setAttribute('data-address', `${places.address_name}`);
-  containerDiv.setAttribute('data-placeName', `${places.place_name}`);
-  containerDiv.setAttribute(
-    'data-category',
-    `${descriptionText[0] + '>' + descriptionText[descriptionText.length - 1]}`
-  );
-  if (places.category_group_code) {
-    containerDiv.setAttribute(
-      'data-categoryCode',
-      `${places.category_group_code}`
-    );
-  }
-
-  if (places.phone) {
-    containerDiv.setAttribute('data-phone', `${places.phone}`);
-  }
-  containerDiv.setAttribute('data-url', `${places.place_url}`);
-  containerDiv.setAttribute('data-x', `${places.x}`);
-  containerDiv.setAttribute('data-y', `${places.y}`);
-
-  const indexDiv = document.createElement('div');
-  indexDiv.classList.add('index-num', 'fs-6');
-  indexDiv.textContent = numbers[count] + 1;
-  count++;
-  numbers.push(count);
 
   // 2. Symbol 부분 생성
   const symbolDiv = document.createElement('div');
@@ -491,15 +498,15 @@ function createSelectLocatioList(places) {
   const authorDiv = document.createElement('div');
   authorDiv.classList.add('flex-grow-1', 'me-2');
 
-  const locationAnchor = document.createElement('a');
-  locationAnchor.href = `${places.place_url}`;
-  locationAnchor.classList.add(
+  const locationSpan = document.createElement('span');
+  locationSpan.href = `${places.place_url}`;
+  locationSpan.classList.add(
     'text-gray-800',
     'text-hover-primary',
     'fs-6',
     'fw-bold'
   );
-  locationAnchor.textContent = places.address_name;
+  locationSpan.textContent = places.address_name;
 
   const addressSpan = document.createElement('span');
   addressSpan.classList.add('text-muted', 'fw-semibold', 'd-block', 'fs-7');
@@ -507,11 +514,11 @@ function createSelectLocatioList(places) {
 
   const description = document.createElement('span');
   description.classList.add('text-muted', 'fw-semibold', 'd-block', 'fs-7');
-
+  const descriptionText = places.category_name.split('>');
   description.textContent =
     descriptionText[0] + '>' + descriptionText[descriptionText.length - 1];
 
-  authorDiv.appendChild(locationAnchor);
+  authorDiv.appendChild(locationSpan);
   authorDiv.appendChild(addressSpan);
   authorDiv.appendChild(description);
 
@@ -541,7 +548,6 @@ function createSelectLocatioList(places) {
   sectionDiv.appendChild(phoneActionLink);
   sectionDiv.appendChild(actionsLink);
 
-  containerDiv.appendChild(indexDiv);
   containerDiv.appendChild(symbolDiv);
   containerDiv.appendChild(sectionDiv);
 
@@ -554,24 +560,6 @@ function createSelectLocatioList(places) {
   );
   wrapperEl.appendChild(containerDiv);
   wrapperEl.appendChild(separatorDiv);
-
-  var content =
-    '<div class="customoverlay marker">' +
-    `  <a href="${places.place_url}" target="_blank">` +
-    `    <span class="titel fs-3">${numbers[count]}</span>` +
-    '  </a>' +
-    '</div>';
-
-  // 커스텀 오버레이가 표시될 위치입니다
-  var position = new kakao.maps.LatLng(places.y, places.x);
-
-  // 커스텀 오버레이를 생성합니다
-  var customOverlay = new kakao.maps.CustomOverlay({
-    map: map,
-    position: position,
-    content: content,
-    yAnchor: 1,
-  });
 }
 
 function selectCategoryGroup(places) {
@@ -793,50 +781,19 @@ function onClickRemoveLocation(dateKey, index) {
   }
 }
 
-async function onClickComplteSchedule() {
-  let locationList = [];
-  let finalDataList = [];
-
-  let dateObject;
-  dateList.value.forEach((date, index) => {
-    dateObject = {};
-    const container = document.querySelector(`.schedule-list-${index}`);
-    console.log(container);
-    const locationEls = container.querySelectorAll('.selected-location');
-    dateObject = {
-      year: date.year,
-      month: date.month,
-      day: date.day,
-      dayOfWeek: date.dayOfWeek,
-      startTime: date.startTime,
-      endTime: date.endTime,
-    };
-    locationEls.forEach((selectedlocationEl, index) => {
-      const address = selectedlocationEl.dataset.address;
-      const placename = selectedlocationEl.dataset.placename;
-      const category = selectedlocationEl.dataset.category;
-      const categorycode = selectedlocationEl.dataset.categorycode;
-      const phone = selectedlocationEl.dataset.phone;
-      const url = selectedlocationEl.dataset.url;
-      const x = selectedlocationEl.dataset.x;
-      const y = selectedlocationEl.dataset.y;
-      locationList.push({
-        address: address,
-        placename: placename,
-        category: category,
-        categorycode: categorycode,
-        phone: phone,
-        url: url,
-        x: x,
-        x: y,
-        locationIndex: index,
-      });
-    });
-
-    dateObject['locations'] = locationList;
-    finalDataList.push(dateObject);
+function onClickComplteSchedule() {
+  // const finalData = {
+  //   schedules: [
+  //     { year: '2024', month: 9, day: 19, dayOfWeek: '월' },
+  //     { year: '2024', month: 9, day: 20, dayOfWeek: '화' },
+  //   ],
+  // };
+  dateList.forEach((date, index) => {
+    const container = document.querySelector(`schedule-list-${index}`);
+    const listDiv = container.querySelector('.selected-location');
+    console.log(listDiv);
+    date.finalData.schedules.push();
   });
-  console.log(finalDataList);
 }
 </script>
 
@@ -954,7 +911,7 @@ li {
 .index-num {
   color: white;
   margin-right: 5px;
-  background-color: #ff6347;
+  background-color: var(--color-bg-blue2);
   width: 20px;
   height: 20px;
   border-radius: 100%;
@@ -971,69 +928,5 @@ li {
 
 .schedule-create-btn:hover i {
   color: white;
-}
-
-.marker {
-  width: 40px;
-  height: 40px;
-  background-color: #ff6347; /* 토마토 색상 */
-  border-radius: 50% 50% 50% 0;
-  position: relative;
-  transform: rotate(-45deg) translateY(20px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.marker a {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: rotate(45deg); /* 부모의 회전을 되돌림 */
-  text-decoration: none; /* 링크 밑줄 제거 */
-}
-
-.marker a span {
-  font-size: 16px;
-  color: white;
-  font-weight: bold;
-}
-
-#pagination {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0;
-}
-
-#pagination a {
-  color: #333;
-  float: left;
-  padding: 8px 16px;
-  text-decoration: none;
-  transition: background-color 0.3s;
-  margin: 0 4px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  border-radius: 4px;
-}
-
-#pagination a.active {
-  background-color: #4caf50;
-  color: white;
-  border: 1px solid #4caf50;
-}
-
-#pagination a:hover:not(.active) {
-  background-color: #ddd;
-}
-
-#pagination a.disabled {
-  pointer-events: none;
-  color: #999;
-  background-color: #f1f1f1;
-  border: 1px solid #ddd;
 }
 </style>
