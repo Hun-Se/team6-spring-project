@@ -126,6 +126,7 @@ export async function getUserPostList(userNo) {
   }
 }
 
+
 //postlist를 가져오기 요청
 export async function getPostList() {
   try { 
