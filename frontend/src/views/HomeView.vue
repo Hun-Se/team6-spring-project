@@ -1,10 +1,6 @@
 <template>
-  <Header>
-   
-  </Header>
+  <Header></Header>
   <div class="d-flex flex-column justify-content-center align-items-center vw-100" style="width:1500px; background-color: #f6f6f6">
-   
-   
 
     <div class="d-flex flex-row mt-5" style="height: 400px">
      <!-- 몸 1 : 로그인 전-->
@@ -111,7 +107,7 @@
     >
    
       <video width="1500px" height="" controls autoplay roop muted>
-       <source src="@/assets/trip.mp4">
+       <source src="">
       </video>
     </div>
     <!-- 몸2영상 -->

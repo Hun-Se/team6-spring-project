@@ -281,6 +281,7 @@ export const useLikeStore = defineStore('likeStore', () => {
 
 //메인화면 키워드 검색 상태
 export const useSearchPostListStore = defineStore('searchpostlist', () => {
+
   const postlist = ref([]);
   async function searchPost(keyword) {
     console.log("searchpostlist --  키워드: ", keyword);

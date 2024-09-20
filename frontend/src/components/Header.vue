@@ -1,18 +1,23 @@
 <template>
   <!-- 헤더 시작 -->
-  <div class="header" style="height: 8vh; background-color: #3abef9">
+  <div class="header fixed-top" style="height: 8vh">
     <!-- 네비바 -->
-    <nav class="navbar navbar-expand-lg navbar-dark w-100 h-100">
+    <nav class="navbar navbar-expand-lg navbar-dark w-100 h-100 d-flex flex">
       <div class="container-fluid">
-        <div class="d-flex align-items-center">
+        <div
+          class="mainBt d-flex align-items-center"
+          @click="navigationStore.goToMain(router)"
+        >
           <img
             width="50"
             height="50"
             src="https://img.icons8.com/stickers/50/airplane-take-off.png"
             alt="airplane-take-off"
-            @click="goToMain"
           />
-          <a class="navbar-brand ms-2 fw-bold" style="font-size: 30px" @click="goToMain"
+          <a
+            class="navbar-brand ms-2 fw-bold"
+            style="font-size: 43px"
+            @click="useNavigationStore.goToMain"
             >I.GO!</a
           >
         </div>
@@ -28,17 +33,37 @@
           <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div
-          class="collapse navbar-collapse justify-content-end"
-          id="navbarNavAltMarkup"
-        >
-          <div class="navbar-nav justify-content-center align-items-center">
-            <a class="nav-link" href="#serch">여행지</a>
-            <a class="nav-link" href="#">계획 등록</a>
-            <a class="nav-link" @click="goToMyPage">마이페이지</a>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+          <div
+            class="navbar-nav justify-content-center align-items-center fw-bold"
+            style="color: black; font-size: 40px !important"
+          >
+            <a class="nav-link" style="font-size: 40px !important" href="#serch"
+              >여행지</a
+            >
 
-            <!-- 로그인/로그아웃 버튼 -->
-            <button @click="handleAuthButton" class="btn btn-primary ms-2">{{ startBt }}</button>
+            <a
+              class="nav-link"
+              style="font-size: 40px !important"
+              @click="navigationStore.goToMain(router)"
+              >계획 등록</a
+            >
+
+            <a
+              class="nav-link"
+              style="font-size: 40px !important"
+              @click="navigationStore.goToMypage(router)"
+              >마이페이지</a
+            >
+
+            <!-- 로그인 로그아웃 버튼 -->
+            <button
+              @click="handLogAction"
+              class="btn btn-primary ms-2 d-flex justify-content-center align-items-center"
+              style="font-size: 25px !important; height: 40px; line-height: 40px"
+            >
+              {{ loginStore.isLoggedIn ? "로그아웃" : "로그인" }}
+            </button>
           </div>
         </div>
       </div>
@@ -49,51 +74,55 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
+import { useLoginStore } from "@/stores/login";
+import { useNavigationStore } from "@/stores/movepage";
+import { storeToRefs } from "pinia";
+import { onMounted, watch } from "vue"; //watch로 로그인 상태변화를 콘솔에 출력
 
-
-const startBt = ref('로그인');
 const router = useRouter();
+const navigationStore = useNavigationStore();
+const loginStore = useLoginStore();
+const { isLoggedIn } = storeToRefs(loginStore);
 
+//페이지 로드 시 로그인 상태를 바로 확인한다.
+onMounted(() => {
+  loginStore.checkLoginStatus();
+});
 
-const checkLoginStatus = () => {
-  const userData = sessionStorage.getItem("userData");
-  if (userData) {
-    startBt.value = "로그아웃"; 
+watch(isLoggedIn, (newValue) => {
+  console.log("로그인 상태 변경: ", newValue);
+});
+
+const handLogAction = () => {
+  if (isLoggedIn.value) {
+    loginStore.handleLogout(); // 로그아웃 처리
   } else {
-    startBt.value = "로그인";
+    router.push("/login"); // 로그인 페이지로 이동
   }
 };
+</script>
 
+<style>
+.header {
+  background-color: #97c5f6;
+}
 
-const handleAuthButton = () => {
-  if (startBt.value == "로그인") {
- 
-    router.push({ path: "/login" });
-  } else {
-   
-    sessionStorage.removeItem("userData", null);
-    sessionStorage.removeItem("userNo", null); 
-    alert("로그아웃 되었습니다.");
-    startBt.value = "로그인"; 
-    router.push({ path: "/mainpage" }); 
-  }
-};
+.navbar-nav .nav-link {
+  color: black !important;
+  font-size: 15px;
+}
 
+.navbar-nav .nav-link:hover {
+  color: #007bff !important;
+}
 
-const goToMyPage = () => {
-  const userData = sessionStorage.getItem("userData");
-  if (!userData) {
-    alert("로그인 후 이용 가능합니다.");
-    router.push({ path: "/login" });
-  } else {
-    router.push({ path: "/mypage" });
-  }
-};
-
-function goToMain() {
-  router.push({ path: "/mainpage" });
+.fixed-top {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1030;
 }
 
 // 페이지가 로드될 때 로그인 상태 확인
@@ -101,4 +130,15 @@ onMounted(() => {
   checkLoginStatus();
 });
 
-</script>
+.navbar-nav .nav-link {
+  color: black !important;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.mainBt {
+  color: black !important;
+  font-size: 15px;
+  cursor: pointer;
+}
+</style>

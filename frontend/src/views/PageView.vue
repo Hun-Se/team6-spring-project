@@ -421,7 +421,9 @@
 </template>
 
 <script setup>
+// 라이브러리 임포트
 import { ref, onMounted } from "vue";
+
 import { usePostStore, useLikeCountStore, usePostLikesListStore, useLikesListStore, useCommentStore, usePostKeywordStore } from "@/stores/test";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
@@ -432,8 +434,25 @@ import Header from '@/components/Header.vue';
 // 로그인한 유저 넘버
 let userNo = sessionStorage.getItem("userNo");
 
-// 좋아요 리스트 가져오기
+// 스토어 임포트
+import { usePostStore, useLikeCountStore, usePostLikesListStore, useLikesListStore, useCommentStore } from "@/stores/test";
+
+// API 함수 임포트
+import { deletePostByNo, updatePostByNo, insertLike, deleteLikeByNo } from "@/api/test";
+
+// 라우터 설정
+const router = useRouter();
+const route = useRoute();
+
+// 스토어 초기화
+const poststore = usePostStore();
+const likestore = useLikeCountStore();
 const likesstore = useLikesListStore();
+const commentStore = useCommentStore();
+
+// 스토어에서 상태 추출
+const { postone } = storeToRefs(poststore);
+const { likeCount } = storeToRefs(likestore);
 const { likesList } = storeToRefs(likesstore);
 
 let mode = 'no'; // 기본적으로 좋아요를 누르지 않은 상태
@@ -451,43 +470,28 @@ async function getlikes() {
   });
 }
 
-// 글 키워드 가져오기
-
-onMounted(() => {
-  
-  init();
-  getlikes(); // 좋아요 리스트 가져오기
+// 라이프사이클 훅
+onMounted(async () => {
+  window.scrollTo(0, 0);
+  await init();
+  await getlikes();
+  await loadPostAndComments();
 });
 
-// 글에 좋아요 관련 함수, 변수
-const likestore = useLikeCountStore();
-const { likeCount } = storeToRefs(likestore);
-
+// 초기화 함수
 async function init() {
   await likestore.fetchLikeCount(postone.value.postNo);
   console.log("좋아요 수 : " + likeCount.value);
 }
 
-const clickLike = async (id) => {
-  const data = {
-    postNo: id,
-    userNo: userNo,
-  };
-  
-  if (mode == 'yes') {
-    // 이미 좋아요를 눌렀다면, 좋아요 취소
-    try {
-      await deleteLikeByNo(lnum); // 좋아요 삭제
-      console.log("좋아요가 취소되었습니다.");
-      alert("좋아요가 취소되었습니다.");
-      mode = 'no'; // 상태 변경
-      lnum = null; // 좋아요 번호 초기화
-      await init(); // 좋아요 수 업데이트
-      await getlikes(); // 좋아요 리스트 업데이트
-    } catch (error) {
-      console.error("좋아요 취소에 실패했습니다:", error);
+async function getlikes() {
+  await likesstore.fetchLikesList();
+  likesList.value.forEach( async (item) => {
+    if (postone.value.postNo == item.postNo) {
+      mode = 'yes';
+      lnum = item.likeNo;
     }
-    } else {
+    else {
     // 좋아요 추가
     try {
       const response = await insertLike(data);
@@ -500,15 +504,11 @@ const clickLike = async (id) => {
       console.error("좋아요 추가에 실패했습니다:", error);
     }
   }
-};
+});
 //키워드 가져오기
 const postkeywordstore = usePostKeywordStore();
 const { postkeyword } = storeToRefs(postkeywordstore);
 
-
-const route = useRoute(); //현재 라우트 정보에 접근
-const poststore = usePostStore(); // 글 정보 가져오기 관련 함수, 변수
-const commentStore = useCommentStore(); //댓글 스토어 사용하기
 const newCommentContent = ref("");
 
 const { postone } = storeToRefs(poststore);
@@ -522,42 +522,60 @@ const postNo = route.params.postNo;
 onMounted(async () => {
   window.scrollTo(0, 0);
   const postNo = route.params.postNo;
+  });
+}
+
+async function loadPostAndComments() {
   try {
     await poststore.fetchPostone(postNo);
     if (!postone.value || Object.keys(postNo).length === 0) {
       throw new Error("게시글을 찾을 수 없습니다.");
     }
-
-  
-    await commentStore.fetchComments(postNo); //댓글 가져오기
-
-    // 잘 나왔는지 확인
+    await commentStore.fetchComments(postNo);
     console.log("Current post data:", postone.value);
     console.log("글번호 : ", postNo);
   } catch (error) {
     console.error("게시글 로딩 중 오류 발생:", error);
-    // alert("게시글을 찾을 수 없습니다. 메인 페이지로 이동합니다.");
-    // router.push("/");
   }
-});
+}
 
-//댓글 작성
+// 좋아요 관련 함수
+const clickLike = async (id) => {
+  const data = { postNo: id, userNo: userNo };
+  
+  if (mode == 'yes') {
+    try {
+      await deleteLikeByNo(lnum);
+      alert("좋아요가 취소되었습니다.");
+      mode = 'no';
+      lnum = null;
+    } catch (error) {
+      console.error("좋아요 취소에 실패했습니다:", error);
+    }
+  } else {
+    try {
+      const response = await insertLike(data);
+      alert("좋아요가 추가되었습니다!");
+      mode = 'yes';
+    } catch (error) {
+      console.error("좋아요 추가에 실패했습니다:", error);
+    }
+  }
+  await init();
+  await getlikes();
+};
+
+// 댓글 관련 함수
 const submitComment = async () => {
   if (postNo) {
     try {
-      //await commentStore.newComment(postNo);
       await commentStore.newComment({
-        content: newCommentContent.value, //여기서 값받고 피니아로 넘어가는 것이다. 
+        content: newCommentContent.value,
         postNo: postNo,
-        userNo: sessionStorage.getItem("userNo"),
+        userNo: userNo,
       });
     } catch (error) {
       console.error("댓글 작성 오류 : ", error);
-      // if (error.response && error.response.status === 401) {
-      //   alert("로그인이 필요합니다.");
-      // } else {
-      //   alert("댓글작성 실패. 다시 시도하기");
-      // }
     }
   } else {
     console.error("게시글 번호가 없습니다.");
@@ -566,42 +584,28 @@ const submitComment = async () => {
   }
 };
 
-//댓글 삭제
 async function deleteComment(commentNo) {
-  console.log("삭제할 댓글", commentNo);
-  if(confirm("정말 댓글을 삭제할까요?") == true) {
+  if(confirm("정말 댓글을 삭제할까요?")) {
     try {
       await commentStore.handleDeleteComment(commentNo, postNo);
-
       alert("댓글 삭제 완료!");
-
-    }catch (error) {
+    } catch (error) {
       console.log("댓글삭제 오류", error);
     }
   }
 }
 
-  // 글 삭제하기 버튼 함수
-  //const deleteButton = document.querySelector('#deleteButton');
-  //deleteButton.addEventListener("click", function (postNo) {
-  //console.log("삭제할 번호 : ", postNo);
-  //deletePostByNo(postNo);
-  //})
-
-  // 글 삭제하기
-  function deletePost(postNo) {
-    if(postone.value.userNo == userNo) {
-      console.log("삭제할 번호 : ", postNo);
-      if (confirm("정말 삭제하시겠습니까??") == true) {
-        deletePostByNo(postNo);
-        router.replace({ path: '/mainpage' });
-      } else {
-        return false;
-      }
-    } else {
-      alert("글 작성자만 삭제가능합니다! 어딜 감히... 떽!");
+// 게시글 관련 함수
+function deletePost(postNo) {
+  if(postone.value.userNo == userNo) {
+    if (confirm("정말 삭제하시겠습니까??")) {
+      deletePostByNo(postNo);
+      router.replace({ path: '/mainpage' });
     }
+  } else {
+    alert("글 작성자만 삭제가능합니다!");
   }
+}
 
   // 글 업데이트하기 버튼 - 모달 함수
 const titleInput = ref('');
@@ -645,8 +649,9 @@ const houseInput = ref('');
 
   }
 
+
    // 글 업데이트 함수
-    function updatePost(postNo) {
+function updatePost(postNo) {
     console.log("수정할 글번호 : ", postNo);
     const data = {
       postNo: postNo,
@@ -661,7 +666,12 @@ const houseInput = ref('');
     updatePostByNo(postNo, data);
     //updateKeywordByNo(postNo);
     updatePostModal.hide();
-  }
+
+  postone.value.postTitle = titleInput.value;
+  postone.value.content = contentInput.value;
+  updatePostByNo(postNo, data);
+  updatePostModal.hide();
+}
 
   // 키워드 업데이트 함수
   function updatePostKeyword(postNo) {
@@ -715,10 +725,19 @@ const houseInput = ref('');
     }
   }
 
-  function goToMainPage() {
-  router.push({ path: "/mainpage" });
+function goToMainPage() {
+router.push({ path: "/mainpage" });
+}
+// 기타 함수
+function toggleHeart() {
+  isHeartFilled.value = !isHeartFilled.value;
+}
+
+function goHome() {
+  router.replace({ path: '/mainpage' });
 }
 </script>
+
 
 <style scoped>
 .elevate-card {

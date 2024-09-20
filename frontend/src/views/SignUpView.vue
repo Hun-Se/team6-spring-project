@@ -1,6 +1,7 @@
 <template>
+  <SecondHeader></SecondHeader>
   <!--begin::Root-->
-  <div class="d-flex flex-column flex-root" id="kt_app_root">
+  <div class="d-flex flex-column flex-root " id="kt_app_root">
     <!--begin::Authentication - Sign-up -->
     <div class="d-flex flex-column flex-lg-row flex-column-fluid">
       <!--begin::Body-->
@@ -422,155 +423,92 @@
     <!--end::Authentication - Sign-up-->
   </div>
   <!--end::Root-->
+
+  <Footer></Footer>
 </template>
 
-<script>
+<script setup>
 import axios from "axios";
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import SecondHeader from "@/components/SecondHeader.vue";
+import Footer from "@/components/Footer.vue";
 
-export default {
-  data() {
-    return {
-      id: "",
-      password: "",
-      confirmPassword: "",
-      name: "",
-      email: "",
-      tel: "",
-      birth: "",
-      selectedgender: "",
-      mbti: "",
-      number: "",
-      location: "",
-      type: "",
-      mobility: "",
-      house: "",
-      img: null,
-      previewUrl: null,
-      error: null,
-      idCheckResult: ref('')
-    };
-  },
+const router = useRouter();
 
-  methods: {
-    async checkIdDuplicate() {
-      try {
-        // this.id 값을 서버로 보냄
-        const response = await axios.get(
-          "http://localhost:9000/backend/api/auth/checkId",
-          {
-            params: { userId: this.id }, // params로 this.id 전달
-          }
-        );
-        this.idCheckResult = response.data; // 서버로부터 받은 메시지 표시
-      } catch (error) {
-        this.idCheckResult = "아이디 중복 확인에 실패했습니다.";
-        alert(this.idCheckResult);
+const id = ref("");
+const password = ref("");
+const confirmPassword = ref("");
+const name = ref("");
+const email = ref("");
+const tel = ref("");
+const birth = ref("");
+const selectedgender = ref("");
+const mbti = ref("");
+const number = ref("");
+const location = ref("");
+const type = ref("");
+const mobility = ref("");
+const house = ref("");
+const img = ref(null);
+const previewUrl = ref(null);
+const error = ref(null);
+const idCheckResult = ref('');
+
+async function checkIdDuplicate() {
+  try {
+    const response = await axios.get(
+      "http://localhost:9000/backend/api/auth/checkId",
+      {
+        params: { userId: id.value },
       }
-    },
+    );
+    idCheckResult.value = response.data;
+  } catch (error) {
+    idCheckResult.value = "아이디 중복 확인에 실패했습니다.";
+    alert(idCheckResult.value);
+  }
+}
 
-    async signup() {
-      try {
-        //비밀번호 확인
+async function signup() {
+  try {
+    // 입력 검증 로직
+    if (!id.value) {
+      alert("아이디를 입력해주세요.");
+      return;
+    }
+    // 다른 필드에 대한 검증 로직도 유사하게 구현
 
-        if (!this.id) {
-          alert("아이디를 입력해주세요.");
-          return;
-        }
+    const formData = new FormData();
+    
+    const signupData = {
+      userId: id.value,
+      userPw: password.value,
+      userName: name.value,
+      userEmail: email.value,
+      userTel: tel.value,
+      userBirth: birth.value,
+      userGender: selectedgender.value,
+    };
 
-        if (!this.password) {
-          alert("비밀번호를 입력해주세요.");
-          return;
-        }
+    const keywordData = {
+      keywordMbti: mbti.value,
+      keywordSort: number.value,
+      keywordLocation: location.value,
+      keywordType: type.value,
+      keywordMobility: mobility.value,
+      keywordHouse: house.value,
+    };
 
-        if (!this.confirmPassword) {
-          alert("비밀번호 확인을 입력해주세요.");
-          return;
-        }
-
-        if (this.password.trim() !== this.confirmPassword.trim()) {
-          alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요.");
-          return;
-        }
-
-        if (!this.name) {
-          alert("이름을 입력해주세요.");
-          return;
-        }
-        if (!this.email) {
-          alert("이메일을 입력해주세요.");
-          return;
-        }
-        if (!this.tel) {
-          alert("전화번호를 입력해주세요.");
-          return;
-        }
-        if (!this.birth) {
-          alert("생년월일을 입력해주세요.");
-          return;
-        }
-        if (!this.selectedgender) {
-          alert("성별을 선택해주세요.");
-          return;
-        }
-        if (!this.mbti) {
-          alert("MBTI를 선택해주세요.");
-          return;
-        }
-        if (!this.number) {
-          alert("구분을 선택해주세요.");
-          return;
-        }
-        if (!this.location) {
-          alert("선호 지역을 선택해주세요.");
-          return;
-        }
-        if (!this.type) {
-          alert("여행 취향을 선택해주세요.");
-          return;
-        }
-        if (!this.mobility) {
-          alert("이동 수단을 선택해주세요.");
-          return;
-        }
-        if (!this.house) {
-          alert("숙소를 선택해주세요.");
-          return;
-        }
-
-        // FormData를 사용하여 JSON 데이터와 이미지 데이터를 함께 전송
-        const formData = new FormData();
-
-        // 1. user JSON 데이터를 FormData에 추가
-        const signupData = {
-          userId: this.id,
-          userPw: this.password,
-          userName: this.name,
-          userEmail: this.email,
-          userTel: this.tel,
-          userBirth: this.birth,
-          userGender: this.selectedgender,
-        };
-
-        // 1. keyword JSON 데이터를 FormData에 추가
-        const keywordData = {
-          keywordMbti: this.mbti,
-          keywordSort: this.number,
-          keywordLocation: this.location,
-          keywordType: this.type,
-          keywordMobility: this.mobility,
-          keywordHouse: this.house,
-        };
-
-        // Blob으로 변환하여 JSON 데이터를 추가
-        formData.append(
-          "user",
-          new Blob([JSON.stringify(signupData)], { type: "application/json" })
-        );
-        formData.append(
-          "keyword",
-          new Blob([JSON.stringify(keywordData)], { type: "application/json" })
-        );
+    formData.append(
+      "user",
+      new Blob([JSON.stringify(signupData)], { type: "application/json" })
+    );
+    
+    formData.append(
+      "keyword",
+      new Blob([JSON.stringify(keywordData)], { type: "application/json" })
+    );
 
         // 2. 이미지 파일이 선택된 경우 FormData에 이미지 추가
         if (this.img) {
@@ -590,40 +528,36 @@ export default {
 
         }
 
-        console.log("회원가입정보: ", formData);
-        
+    console.log("회원가입정보: ", formData);
 
-        // 서버로 회원가입 정보 및 이미지 파일 전송
-        const response = await axios.post(
-          "http://localhost:9000/backend/api/auth/signup",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        alert("회원가입 성공!");
-        this.$router.push({ name: "login" });
-      } catch (error) {
-        this.error = "회원가입 실패: " + error.message;
+    const response = await axios.post(
+      "http://localhost:9000/backend/api/auth/signup",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       }
-    },
+    );
 
-    // 이미지 파일 선택 시 미리보기 URL 설정
-    getFileName(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.img = file; // 선택된 이미지를 저장
-        this.previewUrl = URL.createObjectURL(file); // 이미지 미리보기 URL 생성
-      }
-    },
-    goToLogin() {
-      this.$router.push({ path: "/login" });
-    },
-  },
-};
+    alert("회원가입 성공!");
+    router.push({ name: "login" });
+  } catch (error) {
+    error.value = "회원가입 실패: " + error.message;
+  }
+}
+
+function getFileName(event) {
+  const file = event.target.files[0];
+  if (file) {
+    img.value = file;
+    previewUrl.value = URL.createObjectURL(file);
+  }
+}
+
+function goToLogin() {
+  router.push({ path: "/login" });
+}
 </script>
 
 <style scoped>

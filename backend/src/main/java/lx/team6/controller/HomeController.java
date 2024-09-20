@@ -24,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lx.team6.service.UserService;
 import lx.team6.vo.KeywordVo;
-import lx.team6.vo.UserInfoVo;
 import lx.team6.vo.UserKeywordVo;
 import lx.team6.vo.UserVo;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -195,14 +194,5 @@ public class HomeController {
 		}
 	}
 
-	// user정보 가져오기
-	@GetMapping("/info/{userId}")
-	public ResponseEntity<UserInfoDTO> showUserInfo(@PathVariable String userId) {
-		UserInfoDTO userInfo = userservice.showUserInfo(userId);
-		if (userInfo != null) {
-			return ResponseEntity.ok(userInfo);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
-	}
+	
 }

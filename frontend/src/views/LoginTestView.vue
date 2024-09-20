@@ -1,4 +1,5 @@
 <template>
+    <SecondHeader></SecondHeader>
   <!--begin::Theme mode setup on page load-->
   <!--begin::Root-->
   <div class="d-flex flex-column flex-root" id="kt_app_root" style="height: 100vh">
@@ -177,12 +178,15 @@
 <script setup>
 import { ref } from "vue";
 import { useTestStore } from "@/stores/test"; // Pinia 스토어 가져오기
+import { useLoginStore } from "@/stores/login";
 import router from "@/router/index.js";
+import SecondHeader from "@/components/SecondHeader.vue";
+import Footer from "@/components/Footer.vue";
 
 const id = ref(""); // 사용자 ID
 const password = ref(""); // 비밀번호
 
-const store = useTestStore(); // Pinia 스토어 사용
+const store = useLoginStore(); // Pinia 스토어 사용
 const { handleLogin, error } = store; // 스토어에서 함수와 에러 상태 가져오기
 
 // 로그인 함수 호출
