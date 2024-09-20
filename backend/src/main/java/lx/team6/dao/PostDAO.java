@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -95,6 +97,24 @@ public class PostDAO {
         
         return session.selectList("searchMyPostList", params);
     }
-	
-	
+    
+ // 게시글 리스트 불러오기 (페이지네이션 적용)
+    public List<PostVO> getPosts(int page, int limit) {
+        // 쿼리에 전달할 매개변수 맵 생성
+        Map<String, Object> params = new HashMap<>();
+        int start = (page - 1) * limit; // 시작점 계산
+        params.put("start", start);
+        params.put("limit", limit);
+
+        // MyBatis 쿼리 실행
+        return session.selectList("getPosts", params);
+    }
+
+    // 전체 게시글 수 가져오기
+    public int getTotalPosts() {
+        return session.selectOne("getTotalPosts");
+    }
 }
+	
+
+

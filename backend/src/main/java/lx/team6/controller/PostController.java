@@ -1,6 +1,8 @@
 package lx.team6.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +17,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import lx.team6.service.PostService;
-import lx.team6.vo.KeywordVo;
 import lx.team6.vo.PostKeywordVO;
 import lx.team6.vo.PostVO;
 
@@ -138,5 +139,16 @@ public class PostController {
 		         return ResponseEntity.ok(searchMyList);
 		      }
 		   }
+		   
+		   
+		   // 페이지네이션 적용된 게시글 목록 가져오기
+		    @GetMapping("/posts")
+		    public ResponseEntity<Map<String, Object>> getPosts(
+		        @RequestParam(defaultValue = "1") int page,  // 기본값: 1페이지
+		        @RequestParam(defaultValue = "10") int limit // 기본값: 10개씩 가져오기
+		    ) {
+		        Map<String, Object> response = postservice.getPosts(page, limit);
+		        return ResponseEntity.ok(response);
+		    }
 		
 }

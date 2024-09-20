@@ -1,6 +1,8 @@
 package lx.team6.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,10 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lx.team6.dao.PostDAO;
 import lx.team6.dao.PostKeywordDAO;
-import lx.team6.vo.KeywordVo;
 import lx.team6.vo.PostKeywordVO;
 import lx.team6.vo.PostVO;
-import lx.team6.vo.UserVo;
 
 @Service
 public class PostService {
@@ -118,6 +118,18 @@ public class PostService {
     public List<PostVO> searchMyPostList(Integer userNo, String keyword) {
     	return dao.searchMyPostList(userNo, keyword);
 
+    }
+
+    // 페이지에 맞는 게시글 리스트와 전체 페이지 수 가져오기
+    public Map<String, Object> getPosts(int page, int limit) {
+        List<PostVO> posts = dao.getPosts(page, limit);
+        int totalPosts = dao.getTotalPosts();
+        int totalPages = (int) Math.ceil((double) totalPosts / limit);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("posts", posts);
+        response.put("totalPages", totalPages);
+        return response;
     }
     
 }

@@ -173,5 +173,26 @@
 		    or (p.content like concat('%', #{keyword}, '%'))) 
 		    order by p.created_at DESC
 		</select>
+		
+		 <!-- 게시글 목록 불러오기 -->
+		    <select id="getPosts" parameterType="map" resultType="lx.team6.vo.PostVO">
+		        select p.post_no postNo
+				,
+				p.post_title postTitle
+				, p.content content
+				, p.created_at createdAt
+				, p.updated_at updatedAt
+				, p.img img
+				, p.user_user_no userNo
+				, u.id userId 
+		        from post p
+		        order by p.created_at DESC
+		        limit #{limit} offset #{start}
+		    </select>
+		
+		    <!-- 전체 게시글 수 -->
+		    <select id="getTotalPosts" resultType="int">
+		        select COUNT(*) from post
+		    </select>
 	
 </mapper>
