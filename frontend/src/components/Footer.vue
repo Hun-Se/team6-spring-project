@@ -1,8 +1,8 @@
 <template>
     
   <div
-    class="footer d-flex flex-column justify-content-center align-items-star mt-5"
-    style="background-color: #eaeaea; height: 150px; color: gray"
+    class="footer d-flex flex-column justify-content-center align-items-star "
+    style="background-color: #eaeaea; height: 150px; color: gray; "
   >
     <div class="container">
       <p class="mb-1">Igo 사업자 정보</p>

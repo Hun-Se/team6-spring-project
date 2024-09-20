@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import lx.team6.dto.UserInfoDTO;
 import lx.team6.service.UserService;
 import lx.team6.vo.KeywordVo;
+import lx.team6.vo.UserInfoVo;
 import lx.team6.vo.UserKeywordVo;
 import lx.team6.vo.UserVo;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -175,6 +175,9 @@ public class HomeController {
 		}
 	}
 
+	 
+
+	
 	// 이미지 서빙 컨트롤러 추가
 	@GetMapping("/images/{filename}")
 	public ResponseEntity<Resource> getImage(@PathVariable String filename) {

@@ -27,7 +27,6 @@ import lx.team6.vo.PostVO;
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:5173") // vue.js 주소
-
 public class PostController {
 
 	@Autowired

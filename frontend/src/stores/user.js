@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-
-
+import { login } from "@/api/user";
+import router from "@/router/index.js";
 
 export const useTestStore = defineStore("toggleLog", () => {
     const startBt = ref("로그인"); //초기값
@@ -49,30 +49,14 @@ export const useUserStore = defineStore("user", () => {
         error.value = null;
         alert("로그인 성공");
         console.log("Login data:", userData.value); //로그인하면서 유저 데이터가 저장됨(알림).
-
-        await fetchUserInfo(); //유저 정보 가져오는거 : 밑에서 구현
-        router.push({ path: "/main" }); //물어보기 : about페이지?
+        router.push({ path: "/" });
       } catch (err) {
         error.value = err.message;
         console.error("Login error:", err);
       }
     }
   
-    async function fetchUserInfo() { //유저정보 가져오는거
-      if (!userData.value || !userData.value.id) {
-        console.error("User data not available. Please login first.");
-        return;
-      }
-  
-      try {
-        const response = await getUserInfo(userData.value.id); //아이디에 해당하는 유저 정보 가져오기 (유저아이디)
-        userInfo.value = response.data;
-        console.log("User info:", userInfo.value);
-      } catch (err) {
-        error.value = err.message;
-        console.error("Error fetching user info:", err);
-      }
-    }
-  
-    return { userData, userInfo, error, handleLogin, fetchUserInfo };
+    return { userData, userInfo, error, handleLogin };
   });
+
+  

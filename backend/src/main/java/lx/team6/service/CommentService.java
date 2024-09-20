@@ -14,12 +14,12 @@ public class CommentService {
 	@Autowired
 	CommentDAO dao;
 	
-	public int createComment(CommentVo vo) {
-		return dao.createComment(vo);
+	public int createComment(Object reqData) {
+		return dao.createComment(reqData);
 	}
 	
-	public List<CommentVo> getCommentList() {
-		return dao.getCommentList();
+	public List<CommentVo> getCommentListByPostNo(Integer postNo) {
+		return dao.getCommentListByPostNo(postNo);
 	}
 	
 	public int deleteComment(Integer commentNo) {

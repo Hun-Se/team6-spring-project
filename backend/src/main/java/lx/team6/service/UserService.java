@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lx.team6.dao.UserDAO;
-import lx.team6.dto.UserInfoDTO;
 import lx.team6.vo.KeywordVo;
+import lx.team6.vo.UserInfoVo;
 import lx.team6.vo.UserKeywordVo;
 import lx.team6.vo.UserVo;
 
