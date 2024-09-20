@@ -141,36 +141,27 @@
       email = #{userEmail}
    </select>
 
-   <!-- 회원정보 수정 (User와 Keyword 테이블 동시 업데이트) -->
-   <update id="updateUserAndKeyword"
-      parameterType="lx.team6.vo.UserKeywordVo">
-      update User u
-      join user_keyword k on u.user_no = k.user_user_no
-      set
-      password = #{userPw},
-      name = #{userName},
-      email = #{userEmail},
-      tel_num = #{userTel},
-      birth_date = #{userBirth},
-      img = #{userImage},
-      gender = #{userGender},
-      mbti = #{keywordMbti},
-      key_sort = #{keywordSort},
-      key_location = #{keywordLocation},
-      key_type = #{keywordType},
-      mobility = #{keywordMobility},
-      house = #{keywordHouse}
-      where u.id = #{userId}
-   </update>
-   
-   
+	<!-- 회원정보 수정 (User와 Keyword 테이블 동시 업데이트) -->
+	<update id="updateUserAndKeyword"
+		parameterType="lx.team6.vo.UserKeywordVo">
+		update User u
+		join user_keyword k on u.user_no = k.user_user_no
+		set
+		password = #{userPw},
+		name = #{userName},
+		email = #{userEmail},
+		tel_num = #{userTel},
+		birth_date = #{userBirth},
+		img = #{userImage},
+		gender = #{userGender},
+		mbti = #{keywordMbti},
+		key_sort = #{keywordSort},
+		key_location = #{keywordLocation},
+		key_type = #{keywordType},
+		mobility = #{keywordMobility},
+		house = #{keywordHouse}
+		where u.id = #{userId}
+	</update>
 
-   <!-- 회원탈퇴 
-   <delete id="deleteAddrbookList" parameterType="int">
-      delete k.user_keyword, u.user 
-      from User u join user_keyword k on
-            u.user_no = k.user_user_no
-      where u.id = #{userId};
-   </delete>-->
 
 </mapper>

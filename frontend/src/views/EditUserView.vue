@@ -23,9 +23,10 @@
                 <!--begin::Title-->
                 <h1 class="text-gray-900 fw-bolder mb-3">회원정보수정</h1>
                 <!--end::Title-->
-                <!--begin::Subtitle-->
-                <div class="text-gray-500 fw-semibold fs-6">Igo</div>
-                <!--end::Subtitle=-->
+                <div class="d-flex align-items-center">
+                  <button class="styled-button" @click="goToMainPage()">뒤로가기</button>
+               </div>
+
               </div>
               <!--begin::Heading-->
               <!--begin::Login options-->
@@ -103,34 +104,10 @@
                       <i class="ki-duotone ki-eye fs-2 d-none"></i>
                     </span>
                   </div>
-                  <!--end::비밀번호-->
-
-                  <!--begin::Meter-->
-                  <div
-                    class="d-flex align-items-center mb-3"
-                    data-kt-password-meter-control="highlight"
-                  >
-                    <div
-                      class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"
-                    ></div>
-                    <div
-                      class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"
-                    ></div>
-                    <div
-                      class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"
-                    ></div>
-                    <div
-                      class="flex-grow-1 bg-secondary bg-active-success rounded h-5px"
-                    ></div>
-                  </div>
-                  <!--end::Meter-->
+                  <!--end::비밀번호-->               
                 </div>
                 <!--end::Wrapper-->
-                <!--begin::Hint-->
-                <div class="text-muted">
-                  Use 8 or more characters with a mix of letters, numbers & symbols.
-                </div>
-                <!--end::Hint-->
+               
               </div>
               <!--end::Input group=-->
               <!--end::Input group=-->
@@ -192,6 +169,7 @@
                 <!--begin::Input group=-->
                 <div class="fv-row mb-8 mt-8">
                   <!--begin::생일-->
+                  <label for="birth" class="placeholder-label">생년월일을 입력하세요</label>
                   <input
                     type="date"
                     class="form-control bg-transparent"
@@ -352,11 +330,6 @@
 
               <!--end::Submit button-->
               <!--begin::Sign up-->
-              <div class="text-gray-500 text-center fw-semibold fs-6">
-                우리와의 여행을 끝내고 싶은신가요?
-                <a @click="" class="link-primary fw-semibold" style="cursor:pointer">탈퇴하기</a>
-              </div>
-              <!--end::Sign up-->
             </form>
             <!--end::Form-->
           </div>
@@ -384,27 +357,6 @@
             alt=""
           />
           <!--end::Image-->
-          <!--begin::Title-->
-          <h1
-            class="d-none d-lg-block fs-2qx fw-bolder text-center mb-7"
-            style="color: black"
-          >
-            Fast, Efficient and Productive
-          </h1>
-          <!--end::Title-->
-          <!--begin::Text-->
-          <div class="d-none d-lg-block fs-base text-center" style="color: black">
-            In this kind of post,
-            <a href="#" class="opacity-75-hover text-warning fw-bold me-1">the blogger</a>
-            introduces a person they’ve interviewed <br />
-            and provides some background information about
-            <a href="#" class="opacity-75-hover text-warning fw-bold me-1"
-              >the interviewee</a
-            >
-            and their <br />
-            work following this is a transcript of the interview.
-          </div>
-          <!--end::Text-->
         </div>
         <!--end::Content-->
       </div>
@@ -453,13 +405,20 @@ export default {
   },
 
   methods: {
+
+    goToMainPage() {
+      this.$router.push({ path: "/mainpage" });
+    },
+
     loadUserData() {
       const userData = JSON.parse(sessionStorage.getItem("userData"));
     if (userData) {
       console.log("가져온 데이터 : ", userData);
       
-      this.img = userData.userImage;
-      this.previewUrl = `http://localhost:9000/backend/api/auth${userData.userImage}`;
+      this.img = userData.userImage || '/images/user.png';
+      this.previewUrl = this.img != '/images/user.png' 
+                        ? `http://localhost:9000/backend/api/auth${userData.userImage}`
+                        : this.img;
       this.id = userData.userId;
       this.name = userData.userName;
       this.email = userData.userEmail;
@@ -629,6 +588,19 @@ export default {
   object-fit: cover;
   margin-top: 30px;
   border-radius: 20px;
+}
+
+.styled-button {
+  background: linear-gradient(#d3d3d3, #a9a9a9); 
+  color: white;
+  padding: 10px 20px;
+  border: none; 
+  border-radius: 25px; 
+  font-size: 16px;
+  font-weight: bold; 
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 

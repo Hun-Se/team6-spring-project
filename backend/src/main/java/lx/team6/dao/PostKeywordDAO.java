@@ -20,6 +20,14 @@ public class PostKeywordDAO {
 	public int insertPostKeyword(PostKeywordVO postkeyword) {
 		return session.insert("insertPostKeyword", postkeyword);
 	}
+
+	public PostKeywordVO getPostKeywordByNo(Integer postNo) {
+		return session.selectOne("getPostKeywordByNo", postNo);
+	}
+
+	public int updatePostKeyword(PostKeywordVO postkeyword) {
+		return session.update("updatePostKeyword", postkeyword);
+	}
 	
 	
 }

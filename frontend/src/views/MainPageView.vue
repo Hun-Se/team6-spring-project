@@ -1,56 +1,7 @@
 <template>
+  <Header></Header>
   <div class="d-flex flex-column" style="background-color: #f6f6f6">
-    <!-- 헤더 시작 -->
-    <div class="header" style="height: 8vh; background-color: #3abef9">
-      <!-- 네비바 -->
-      <nav class="navbar navbar-expand-lg navbar-dark w-100 h-100">
-        <div class="container-fluid">
-          <div class="d-flex align-items-center">
-            <img
-              width="50"
-              height="50"
-              src="https://img.icons8.com/stickers/50/airplane-take-off.png"
-              alt="airplane-take-off"
-            />
-            <a
-              class="navbar-brand ms-2 fw-bold"
-              style="font-size: 30px"
-              href="#"
-              @click="goToMain()"
-              >I.GO!</a
-            >
-          </div>
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNavAltMarkup"
-            aria-controls="navbarNavAltMarkup"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-
-          <div
-            class="collapse navbar-collapse justify-content-end"
-            id="navbarNavAltMarkup"
-          >
-            <div class="navbar-nav justify-content-center align-items-center">
-              <a class="nav-link" href="#serch">여행지</a>
-
-              <a class="nav-link" href="#">계획 등록</a>
-
-              <button @click="log()" class="btn btn-primary ms-2">
-                {{ startBt }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-      <!-- 네비바 -->
-    </div>
-    <!-- 헤더 끝 -->
+    
     <!-- 헤더 끝 -->
 
     <!-- 몸 1-->
@@ -85,11 +36,9 @@
           <div
             class="d-flex flex-column justify-content-center align-items-start flex-grow-1 ms-4"
           >
-            <h2 class="fw-bold">{{ user.name }}님!</h2>
-            <p style="font-size: 12px; color: gray">{{ user.Id }}</p>
+            <h2 class="fw-bold">{{ userData.userName }}님!</h2>
+            <p style="font-size: 12px; color: gray">{{ userData.userId }}</p>
             <div class="d-flex align-items-center mt-2">
-              <p class="me-2 mb-0">나의 여행:</p>
-              <p class="mb-0">{{ user.post }} 개</p>
             </div>
 
             <div class="mt-4">
@@ -604,12 +553,15 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { usePostListStore, usePostStore } from '@/stores/test';
+import { usePostListStore, usePostStore, usePostKeywordStore } from '@/stores/test';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router'; // 이미 useRouter로 가져옴
 import { insertPost, insertPostAndKeyword } from '@/api/test';
 import { Modal } from 'bootstrap';
 import axios from 'axios';
+import Header from '@/components/Header.vue';
+import Footer from '@/components/Footer.vue';
+
 
 // useRouter 선언
 const router = useRouter();
@@ -649,6 +601,7 @@ const uploadImage = async () => {
 // db에서 posts들 데이터 가져오기
 onMounted(() => {
   init();
+  
 });
 
 // 스토어 가져와서 리스트 받아오기
@@ -661,10 +614,14 @@ const { postlist } = storeToRefs(store);
 // 포스트 번호에따라 포스트 정보 받아오기
 const poststore = usePostStore();
 const postone = storeToRefs(poststore);
+//키워드
+const keywordstore = usePostKeywordStore();
+const { postkeyword } = storeToRefs(keywordstore);
 
 async function getpostid(id) {
   console.log('Clicked post ID:', id);
   await poststore.fetchPostone(id);
+  await keywordstore.fetchpostkeyword(id);
   console.log('Fetched post data:', postone);
   router.replace({ path: '/page' });
 }
@@ -680,6 +637,7 @@ const checkLoginStatus = () => {
   } else {
     // 로그인 되어 있는 경우 글쓰기 모달을 띄움
     showCreatePostModal();
+    console.log("불러온데이터: ", userData);
   }
 };
 
@@ -687,6 +645,21 @@ const checkLoginStatus = () => {
 let createPostModal;
 
 function showCreatePostModal() {
+  // 내용 초기화 하기
+  titleInput.value = '';
+  contentInput.value = '';
+  mbtiInput.value = '';
+  sortInput.value = '';
+  locationInput.value = '';
+  typeInput.value = '';
+  mobilityInput.value = '';
+  houseInput.value = '';
+  // 파일 입력 요소 초기화
+  const fileInput = document.querySelector('input[type="file"]');
+  if (fileInput) {
+    fileInput.value = ''; // HTML 파일 입력 요소의 값 초기화
+  }
+  // 대화상자 띄우기
   const elem = document.querySelector('#kt_modal_new_target');
   createPostModal = new Modal(elem);
   createPostModal.show();
@@ -708,7 +681,7 @@ async function createPost() {
   const postData = {
     postTitle: titleInput.value,
     content: contentInput.value,
-    userNo: sessionStorage.getItem('userNo'),
+    userNo: sessionStorage.getItem('userData'),
     img: imagePath || '',
   };
 
@@ -748,9 +721,6 @@ function toggleHeart() {
   isHeartFilled.value = !isHeartFilled.value;
 }
 
-function goToMain() {
-  router.push({ path: "/mainpage" });
-}
 </script>
 
 

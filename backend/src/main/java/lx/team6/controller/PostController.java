@@ -31,14 +31,10 @@ public class PostController {
 
 	@Autowired
 	PostService postservice;
-
-	Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	// 게시글 리스트 불러오기
 	@GetMapping("/postlist")
 	public ResponseEntity<List<PostVO>> getPostList(){
-		logger.info("info : MyBatis로 getPostList()기능 처리");
-		logger.debug("debug : postlist");
 		List<PostVO> isgetpost = postservice.getPostList(); // 서비스에 넣을 함수 이름
 		if (isgetpost != null) {
 			return ResponseEntity.ok(isgetpost);
@@ -50,8 +46,6 @@ public class PostController {
 	// 특정 유저의 게시글 리스트 불러오기
 		@GetMapping("/userpostlist/{userNo}")
 		public ResponseEntity<List<PostVO>> getUserPostList(@PathVariable("userNo") Integer userNo){
-			logger.info("info : MyBatis로 getuserPostList()기능 처리");
-			logger.debug("debug : userpostlist");
 			if (userNo == null) {
 		        return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		    }
@@ -63,7 +57,6 @@ public class PostController {
 	// 게시글 한개 불러오기 - 정은
 	@GetMapping("/post/{postNo}")
 	public ResponseEntity<PostVO> getpost(@PathVariable("postNo") Integer postNo) {
-		logger.info("info : MyBatis로 getpost()기능 처리");
 		System.out.println(postNo);
 		PostVO post = postservice.getPostByNo(postNo); // 서비스에 넣을 함수 이름
 		if (post != null) {
@@ -78,7 +71,6 @@ public class PostController {
 	public ResponseEntity<String> insertPostAndKeyword(
 			@RequestPart("post") PostVO post,
 			@RequestPart("postkeyword") PostKeywordVO postkeywordVo) {
-		logger.info("info : MyBatis로 insertPost()기능 처리");
 		try {
 			postservice.insertPostAndKeyword(post, postkeywordVo);
 			return ResponseEntity.status(HttpStatus.CREATED).body("게시글이 키워드와 함께 성공적으로 등록되었습니다.");
@@ -90,7 +82,6 @@ public class PostController {
 	// 게시글 수정 - 정은
 	@PatchMapping("/update/{postNo}")
 	public ResponseEntity<String> updatePost(@PathVariable("postNo") Integer postNo, @RequestBody PostVO post) {
-		logger.info("info : MyBatis로 updatePost()기능 처리");
 		try {
 			System.out.println("수정할 글번호 : " + postNo);
 			System.out.println("받은 글내용 : " + post);
@@ -104,7 +95,6 @@ public class PostController {
 	// 게시글 삭제 - 정은
 	@DeleteMapping("/delete/{postNo}")
 	public ResponseEntity<String> deletePost(@PathVariable("postNo") Integer postNo) {
-		logger.info("info : MyBatis로 deletePost()기능 처리");
 		try {
 			System.out.println("삭제할 글번호 : " + postNo);
 			postservice.deletePost(postNo);
@@ -117,7 +107,6 @@ public class PostController {
 	// 좋아요 리스트 가져오기
 	@GetMapping("/likesPostList/{userNo}")
 	public ResponseEntity<List<PostVO>> getLikesPost(@PathVariable("userNo") Integer userNo) {
-		logger.info("info : MyBatis로 getLikesPost()기능 처리");
 		List<PostVO> likedPosts = postservice.getLikesPostList(userNo); // 서비스에 넣을 함수 이름
 		if (likedPosts != null && !likedPosts.isEmpty()) {
 			return ResponseEntity.ok(likedPosts);
@@ -131,7 +120,6 @@ public class PostController {
 		 //메인페이지 검색기능
 		   @GetMapping("/searchPostList")
 		   public ResponseEntity<List<PostVO>> searchPostList(@RequestParam("keyword") String keyword) { 
-			   logger.info("info : MyBatis로 search()기능 처리");
 			   List<PostVO> searchList = postservice.searchPostList(keyword);
 		      if(searchList.isEmpty()) {
 		         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -143,7 +131,6 @@ public class PostController {
 		   //마이페이지 검색
 		   @GetMapping("/searchMyPostList")
 		   public ResponseEntity<List<PostVO>> searchMyPostList(@RequestParam("userNo") Integer userNo, @RequestParam("keyword") String keyword) { 
-			   logger.info("Received userNo: " + userNo + ", keyword: " + keyword);
 			   List<PostVO> searchMyList = postservice.searchMyPostList(userNo,keyword);
 		      if(searchMyList.isEmpty()) {
 		         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

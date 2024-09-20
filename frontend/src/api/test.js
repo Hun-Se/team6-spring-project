@@ -159,7 +159,7 @@ export async function deletePostByNo(postNo) {
   }
 }
 
-// PATCH 요청 - 후기글 업데이트
+// 글 업데이트
 export async function updatePostByNo(postNo, data) {
   try {
     const response = await api.patch(`/auth/update/${postNo}`, data);
@@ -203,15 +203,24 @@ export async function insertPostAndKeyword(postData, keywordData) {
   }
 } 
 
-
-
-// 글 키워드 추가 요청
-export async function insertPostKeyword(data) {
+//post_no에 따른 키워드 수정하기 요청
+export async function updatePostKeywordByNo(data) {
   try {
-    const response = await api.post('/auth/insertkeyword', data);
+    const response = await api.post(`/auth/updatekeyword`, data);
     return response.data;
   } catch (err) {
     console.error(err);
+  }
+}
+
+//post_no에 따른 키워드한개 가져오기 요청
+export async function getPostKeywordByNo(postNo) {
+  try {
+    const response = await api.get(`/auth/postkeyword/${postNo}`);
+    console.log("API response:", response);
+    return response.data;
+  } catch (err) {
+    console.error(err); // 에러를 콘솔에 출력
   }
 }
 
