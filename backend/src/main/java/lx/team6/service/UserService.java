@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lx.team6.dao.UserDAO;
 import lx.team6.vo.KeywordVo;
-import lx.team6.vo.UserInfoVo;
 import lx.team6.vo.UserKeywordVo;
 import lx.team6.vo.UserVo;
 
@@ -86,10 +85,7 @@ public class UserService {
         return userDAO.findById(userKeywordVo.getUserId());
     }
 
-    //유저 정보 가져오기
-    public UserInfoDTO showUserInfo(String userId) {
-    	return userDAO.showUserInfo(userId);
-    }
+  
     
  // UserService 클래스에 사용자 정보를 조회하는 메서드 추가
     public UserKeywordVo checkUserById(String userId) {

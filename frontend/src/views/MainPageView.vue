@@ -1,5 +1,6 @@
 <template>
-  <Header></Header>
+<Header></Header>
+
   <div class="d-flex flex-column" style="background-color: #f6f6f6">
     
     <!-- 헤더 끝 -->
@@ -7,18 +8,18 @@
     <!-- 몸 1-->
     <div class="d-flex flex-row mt-5" style="height: 400px">
       <div
-        v-if="startBt == '로그인'"
+        v-if="!isLoggedIn.value"
         class="card shadow d-flex justify-content-center align-items-start m-2 ms-3"
         style="width: 900px"
       >
         <div class="ms-2 p-5">
-          <h1 class="fw-bold">여행을 계획할 땐, I GO!</h1>
+          <h1 class="fw-bold ">여행을 계획할 땐, I GO!</h1>
           <span>막막했던 여행? I,Go와 함께 가요!</span>
         </div>
       </div>
 
       <div
-        v-if="startBt == '로그아웃'"
+        v-else
         class="card shadow d-flex justify-content-center align-items-start m-2 ms-3"
         style="width: 900px"
       >
@@ -219,7 +220,7 @@
       style="height: 1200px"
       id="serch"
     >
-      <h1 class="mt-4 mb-5 fw-bold">어디로 여행을 떠나볼까요?</h1>
+      <h1 class="mt-4 mb-5 fw-bold" style="font-size: 50px !important">어디로 여행을 떠나볼까요?</h1>
       <div class="mt-3 mb-4 d-flex" style="width: 800px; height: 50px">
         <input
           class="form-control shadow"
@@ -268,24 +269,9 @@
       </div>
       <!-- v-for END -->
       <div>
-        <button @click="checkLoginStatus" class="btn btn-primary fs-6 p-2">
+        <button @click="checkLoginStatus" class="btn btn-primary fs-6 p-2" style="font-size: 40px !important">
           글쓰기
         </button>
-      </div>
-    </div>
-
-    <div
-      class="footer d-flex flex-column justify-content-center align-items-star mt-5"
-      style="background-color: #eaeaea; height: 150px; color: gray"
-    >
-      <div class="container">
-        <p class="mb-1">Igo 사업자 정보</p>
-        <p class="mb-1 mt-3" style="font-size: 12px">팀 6조 | 대표 김세훈</p>
-        <p class="mb-1" style="font-size: 12px">이규태 박정은 최수환 함지수</p>
-        <p class="mb-1" style="font-size: 12px">
-          서울특별시 강남구 언주로 603 LX공간정보아카데미
-        </p>
-        <p class="mb-1" style="font-size: 12px">끝나고 여행가요~</p>
       </div>
     </div>
   </div>
@@ -322,7 +308,7 @@
               <h1 class="mb-3">글쓰기</h1>
               <!--end::Title-->
               <!--begin::Description-->
-              <div class="text-muted fw-semibold fs-5">
+              <div class="text-muted fw-semibold fs-5" style="font-size: 24px !important">
                 글의 제목, 이미지, 내용을 입력해주세요.
               </div>
               <!--end::Description-->
@@ -332,7 +318,7 @@
             <!--begin::이름 입력상자-->
             <div class="d-flex flex-column mb-8 fv-row">
               <label class="d-flex align-items-center fs-6 fw-semibold mb-2">
-                <span class="required">제목</span>
+                <span class="required" style="font-size: 24px !important">제목</span>
                 <span
                   class="ms-1"
                   data-bs-toggle="tooltip"
@@ -355,8 +341,8 @@
             <!--end::이름 입력상자-->
             <!-- 이미지 선택 START -->
             <div class="d-flex flex-column mb-8 fv-row">
-              <label class="d-flex align-items-center fs-6 fw-semibold mb-2">
-                <span class="required">파일 선택</span>
+              <label class="d-flex align-items-center fs-6 fw-semibold mb-2"  >
+                <span class="required" style="font-size: 24px !important" >파일 선택</span>
               </label>
               <input
                 type="file"
@@ -369,7 +355,7 @@
             <!--begin::내용 입력상자-->
             <div class="d-flex flex-column mb-8 fv-row">
               <label class="d-flex align-items-center fs-6 fw-semibold mb-2">
-                <span class="required">내용</span>
+                <span class="required" style="font-size: 24px !important">내용</span>
                 <span
                   class="ms-1"
                   data-bs-toggle="tooltip"
@@ -549,6 +535,8 @@
   </div>
   <!--end::대화상자 - 검사일정수정-->
   <!-- 글 작성 모달 END -->
+
+  <Footer></Footer>
 </template>
 
 <script setup>
@@ -558,10 +546,13 @@ import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router'; // 이미 useRouter로 가져옴
 import { insertPost, insertPostAndKeyword } from '@/api/test';
 import { Modal } from 'bootstrap';
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 import axios from 'axios';
-import Header from '@/components/Header.vue';
-import Footer from '@/components/Footer.vue';
+import { useLoginStore } from '@/stores/login';
 
+const loginStore = useLoginStore();
+const { isLoggedIn } = storeToRefs(loginStore);
 
 // useRouter 선언
 const router = useRouter();

@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '../views/Home.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,7 +68,12 @@ const router = createRouter({
       path: '/edituser',
       name: 'edituser',
       component: () => import("../views/EditUserView.vue")
-    }
+    },
+    {
+      path: '/re',
+      name: 're',
+      component: () => import("../views/Home.vue")
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     // 페이지를 이동할 때 항상 맨 위로 스크롤
